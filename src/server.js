@@ -155,7 +155,7 @@ await client.connect().then(() => {
 
     const checkOracle = await msc_monthly_2025.findOne({ oracle: newOracle, month: lastMonth });
     if (!checkOracle) {
-      return res.status(400).json({ success: false, message: `No reords for you, please check back`, acct: "XXXX" })
+      return res.status(400).json({ success: false, message: `No reords updated for you, please check back`, acct: "XXXX" })
     }
 
 
