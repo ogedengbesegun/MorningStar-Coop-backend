@@ -15,13 +15,10 @@ import { MongoClient } from 'mongodb';
 dotenv.config();
 
 const app = express();
-app.use(cors({
-  origin: 'https://morningstar-coop.onrender.com',
-
-}));
+app.use(cors());
 app.use(express.json());
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 const client = new MongoClient(process.env.MONGO_DB_URI);
 
 // async function startServer() {
