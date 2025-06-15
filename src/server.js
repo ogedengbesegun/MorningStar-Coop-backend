@@ -107,43 +107,43 @@ await client.connect().then(() => {
 
   // })
 
-  
-///////
-app.post("/api/login", async (req, res) => {
-  const { oracle, pword } = req.body;
 
-  if (!oracle || !pword) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Please fill in all fields" });
-  }
+  ///////
+  app.post("/api/login", async (req, res) => {
+    const { oracle, pword } = req.body;
 
-  const krtlogin = await userslog.findOne({ oracle });
+    if (!oracle || !pword) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Please fill in all fields" });
+    }
 
-  if (!krtlogin || !krtlogin.password) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Oracle number not found" });
-  }
+    const krtlogin = await userslog.findOne({ oracle });
 
-  const match = await bcrypt.compare(pword, krtlogin.password);
-  if (!match) {
-    return res.status(400).json({
-      success: false,
-      message: "Login password incorrect, check and try again",
+    if (!krtlogin || !krtlogin.password) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Oracle number not found" });
+    }
+
+    const match = await bcrypt.compare(pword, krtlogin.password);
+    if (!match) {
+      return res.status(400).json({
+        success: false,
+        message: "Login password incorrect, check and try again",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `${krtlogin.full_name.split(" ")[1]} Welcome to Morning Star Cooperative Society`,
+      user: {
+        id: krtlogin._id,
+        full_name: krtlogin.full_name,
+        oracle: krtlogin.oracle,
+      },
     });
-  }
-
-  res.status(200).json({
-    success: true,
-    message: `${krtlogin.full_name.split(" ")[1]} Welcome to Morning Star Cooperative Society`,
-    user: {
-      id: krtlogin._id,
-      full_name: krtlogin.full_name,
-      oracle: krtlogin.oracle,
-    },
   });
-});
 
 
 
