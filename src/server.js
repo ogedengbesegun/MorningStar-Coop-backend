@@ -47,8 +47,13 @@ await client.connect().then(() => {
   app.post('/api/signup', async (req, res) => {
     const { fullname, oracleNum, pword, cpword } = req.body;
 
+    const aMember = await msc_2025.findOne({ oracle: oracleNum });
+    if (!aMember) {
+      return res.status(404).json({ success: false, message: "Sorry, You are Not a Member of this Cooperative" })
+    }
+
     if (fullname === '' || oracleNum === '' || pword === '') {
-      return res.status(404).json({ success: false, message: 'Please fill in all fields' });
+      return res.status(404).json({ success: false, message: 'Please fill in all fieldsghj' });
     }
 
     if (pword.length < 6) {
