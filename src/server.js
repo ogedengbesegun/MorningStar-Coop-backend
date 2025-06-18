@@ -47,10 +47,8 @@ await client.connect().then(() => {
   app.post('/api/signup', async (req, res) => {
     const { fullname, oracleNum, pword, cpword } = req.body;
 
-    const aMember = await msc_monthly_2025.findOne({ oracle: oracleNum });
-    if (!aMember) {
-      return res.status(404).json({ success: false, message: "Sorry, You are Not a Member of this Cooperative" })
-    }
+    // const aMember = await msc_monthly_2025.findOne({ oracle: oracleNum });
+
 
     if (fullname === '' || oracleNum === '' || pword === '') {
       return res.status(404).json({ success: false, message: 'Please fill in all fieldsghj' });
@@ -64,6 +62,9 @@ await client.connect().then(() => {
       return res.status(400).json({ success: false, message: 'Passwords do not match, Please check and try again' })
     };
 
+    // if (!aMember) {
+    //   return res.status(404).json({ success: false, message: "Sorry, You are Not a Member of this Cooperative" })
+    // }
 
 
     const checkOracle = await userslog.findOne({ oracle: oracleNum });
