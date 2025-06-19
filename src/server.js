@@ -186,8 +186,8 @@ await client.connect().then(() => {
 
     if (oraclededuct === "" || pwordn === "" || pwordn.length < 6) {
       return res.status(404).json({
-        success: false, message: `Please Enter all required fields
-    Note: Password Must be Min 6 and Max 15 Characters` })
+        success: false, message: `Please Enter all required fields Note: Password Must be Min 6 and Max 15 Characters`
+      })
     }
 
     ///look fot oraclededuct
@@ -197,7 +197,7 @@ await client.connect().then(() => {
       month: lastMonth, deduction: oraclededuct.split(',')[1]
     })
     if (!findoraclededuct) {
-      return res.status(404).json({ success: false, message: "please, Check your input and try again" })
+      return res.status(404).json({ success: false, message: "Please, Check your input and try again" })
     };
 
     const saltRounds = 10;
