@@ -47,11 +47,11 @@ await client.connect().then(() => {
   app.post('/api/signup', async (req, res) => {
     const { fullname, oracleNum, pword, cpword } = req.body;
 
-    // const aMember = await msc_monthly_2025.findOne({ oracle: oracleNum });
+    const aMember = await msc_monthly_2025.findOne({ oracle: oracleNum });
 
 
     if (fullname === '' || oracleNum === '' || pword === '') {
-      return res.status(404).json({ success: false, message: 'Please fill in all fieldsghj' });
+      return res.status(404).json({ success: false, message: 'Please fill in all fields' });
     }
 
     if (pword.length < 6) {
@@ -62,15 +62,15 @@ await client.connect().then(() => {
       return res.status(400).json({ success: false, message: 'Passwords do not match, Please check and try again' })
     };
 
-    // if (!aMember) {
-    //   return res.status(404).json({ success: false, message: "Sorry, You are Not a Member of this Cooperative" })
-    // }
+    if (!aMember) {
+      return res.status(404).json({ success: false, message: "Sorry, You are Not a Member of this Cooperative Society" })
+    }
 
 
     const checkOracle = await userslog.findOne({ oracle: oracleNum });
     // const findfullname=await userslog.findOne({})
     if (checkOracle) {
-      return res.status(400).json({ success: false, message: `A member with the Oracle Number already exist. Please check and try again` })
+      return res.status(400).json({ success: false, message: `A member with this Oracle Number already exist. Please check and try again` })
     }
     //////////
     const saltRounds = 10;
