@@ -28,13 +28,13 @@ await client.connect().then(() => {
 
   const db = client.db(process.env.DB_MsCoop);
   const userslog = db.collection('userslog');
-  const msc_2024 = db.collection('msc_2024');
-  const msc_2025 = db.collection('msc_2025');
-  const msc_2026 = db.collection('msc_2026');
-  const msc_2027 = db.collection('msc_2027');
-  const msc_2028 = db.collection('msc_2028');
-  const msc_2029 = db.collection('msc_2029');
-  const msc_2030 = db.collection('msc_2030');
+  // const msc_2024 = db.collection('msc_2024');
+  // const msc_2025 = db.collection('msc_2025');
+  // const msc_2026 = db.collection('msc_2026');
+  // const msc_2027 = db.collection('msc_2027');
+  // const msc_2028 = db.collection('msc_2028');
+  // const msc_2029 = db.collection('msc_2029');
+  // const msc_2030 = db.collection('msc_2030');
   //////////monthly deduction
   const msc_monthly_2025 = db.collection('msc_monthly_2025');
   const msc_monthly_2026 = db.collection('msc_monthly_2026');
@@ -154,12 +154,12 @@ await client.connect().then(() => {
 
 
   app.post('/api/msc_monthly_2025', async (req, res) => {
-    const { lastMonth, newOracle } = req.body;
+    const { lastMonth, c_month, newOracle } = req.body;
     // if (newMonth === '' || newOracle === '') {
     //   return res.status(404).json({ success: false, message: 'XXXX' });
     // }
 
-    const checkOracle = await msc_monthly_2025.findOne({ oracle: newOracle, month: lastMonth });
+    const checkOracle = await msc_monthly_2025.findOne({ oracle: newOracle, month: c_month || lastMonth });
     if (!checkOracle) {
       return res.status(400).json({ success: false, message: `No reords updated for you, please check back`, acct: "XXXX" })
     }
