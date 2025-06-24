@@ -154,12 +154,12 @@ await client.connect().then(() => {
 
 
   app.post('/api/msc_monthly_2025', async (req, res) => {
-    const { lastMonth, newMonth, newOracle } = req.body;
+    const { lastMonth, thisMonth, newOracle } = req.body;
     // if (newMonth === '' || newOracle === '') {
     //   return res.status(404).json({ success: false, message: 'XXXX' });
     // }
 
-    const checkOracle = await msc_monthly_2025.findOne({ oracle: newOracle, month: newMonth || lastMonth });
+    const checkOracle = await msc_monthly_2025.findOne({ oracle: newOracle, month: thisMonth || lastMonth });
     if (!checkOracle) {
       return res.status(400).json({ success: false, message: `No records updated for you, please check back`, acct: "XXXX" })
     }
