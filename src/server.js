@@ -86,32 +86,7 @@ await client.connect().then(() => {
   });
 
 
-  // app.post('/api/login', async (req, res) => {
-  //   const { oracle, pword } = req.body;
-
-  //   const krtlogin = await userslog.findOne({ oracle: oracle })
-
-  //   if (!oracle || !pword) {
-  //     return res.status(404).json({ success: false, message: 'Please fill in all fields' });
-  //   }
-
-  //   const match = await bcrypt.compare(pword, krtlogin?.password);
-
-  //   if (!match) {
-  //     return res.status(400).json({ success: false, message: `Login Password incorrect, Check and try again` })
-
-  //   }
-  //   res.status(200).json({
-  //     success: true,
-  //     message: `${krtlogin.full_name.split(" ")[1]} Welcome to MorningStar Cooperative Society `
-  //     , user: {
-  //       id: krtlogin._id,
-  //       full_name: krtlogin.full_name,
-  //       oracle: krtlogin.oracle,
-  //     }
-  //   })
-
-  // })
+  
 
 
   ///////
@@ -152,44 +127,6 @@ await client.connect().then(() => {
   });
 
 
-
-  // app.post('/api/msc_monthly_2025', async (req, res) => {
-  //   const { lastMonth, thisMonth, newOracle } = req.body;
-
-
-  //   const checkOracle = await msc_monthly_2025.findOne({ oracle: newOracle, month: lastMonth });
-  //   const checkOracle2 = await msc_monthly_2025.findOne({ oracle: newOracle, month: thisMonth });
-
-  //   // const finalCheck = await checkOracle.toArray();
-  //   if (!checkOracle) {
-  //     return res.status(400).json({ success: false, message: `No records updated for you, please check back`, acct: "XXXX" })
-  //   }
-
-  //   if (!checkOracle2) {
-  //     return res.status(400).json({ success: false, message: `No Current Month yet, please check back`, acct2: "XXXX" })
-  //   }
-
-
-
-  //   res.status(201).json({
-  //     success: true,
-  //     acct: {
-  //       deduction: checkOracle?.deduction,
-  //       savings: checkOracle?.savings,
-  //       loan_balance: checkOracle?.loan_balance,
-  //       retirement: checkOracle?.retirement,
-  //     },
-  //     success: true,
-  //     acct2: {
-  //       deduction: checkOracle2?.deduction,
-  //       savings: checkOracle2?.savings,
-  //       loan_balance: checkOracle2?.loan_balance,
-  //       retirement: checkOracle2?.retirement,
-  //     }
-  //   });
-
-
-  // })
 
   ///////////////
   app.post('/api/msc_monthly_2025', async (req, res) => {
