@@ -153,28 +153,95 @@ await client.connect().then(() => {
 
 
 
+  // app.post('/api/msc_monthly_2025', async (req, res) => {
+  //   const { lastMonth, thisMonth, newOracle } = req.body;
+
+
+  //   const checkOracle = await msc_monthly_2025.findOne({ oracle: newOracle, month: lastMonth });
+  //   const checkOracle2 = await msc_monthly_2025.findOne({ oracle: newOracle, month: thisMonth });
+
+  //   // const finalCheck = await checkOracle.toArray();
+  //   if (!checkOracle) {
+  //     return res.status(400).json({ success: false, message: `No records updated for you, please check back`, acct: "XXXX" })
+  //   }
+
+  //   if (!checkOracle2) {
+  //     return res.status(400).json({ success: false, message: `No Current Month yet, please check back`, acct2: "XXXX" })
+  //   }
+
+
+
+  //   res.status(201).json({
+  //     success: true,
+  //     acct: {
+  //       deduction: checkOracle?.deduction,
+  //       savings: checkOracle?.savings,
+  //       loan_balance: checkOracle?.loan_balance,
+  //       retirement: checkOracle?.retirement,
+  //     },
+  //     success: true,
+  //     acct2: {
+  //       deduction: checkOracle2?.deduction,
+  //       savings: checkOracle2?.savings,
+  //       loan_balance: checkOracle2?.loan_balance,
+  //       retirement: checkOracle2?.retirement,
+  //     }
+  //   });
+
+
+  // })
+
+  ///////////////
   app.post('/api/msc_monthly_2025', async (req, res) => {
     const { lastMonth, thisMonth, newOracle } = req.body;
-    // if (newMonth === '' || newOracle === '') {
-    //   return res.status(404).json({ success: false, message: 'XXXX' });
-    // }
 
-    const checkOracle = await msc_monthly_2025.findOne({ oracle: newOracle, month: thisMonth || lastMonth });
-    if (!checkOracle) {
-      return res.status(400).json({ success: false, message: `No records updated for you, please check back`, acct: "XXXX" })
-    }
+    try {
+      const checkOracle = await msc_monthly_2025.findOne({
+        oracle: newOracle,
+        month: lastMonth,
+      });
 
+      const checkOracle2 = await msc_monthly_2025.findOne({
+        oracle: newOracle,
+        month: thisMonth,
+      });
 
-    res.status(201).json({
-      success: true, acct: {
-        deduction: checkOracle?.deduction,
-        savings: checkOracle?.savings,
-        loan_balance: checkOracle?.loan_balance,
-        retirement: checkOracle?.retirement,
+      if (!checkOracle && !checkOracle2) {
+        return res.status(400).json({
+          success: false,
+          message: `No records found for you. Please check back.`,
+        });
       }
-    });
 
-  })
+      return res.status(200).json({
+        success: true,
+        acct: checkOracle
+          ? {
+            deduction: checkOracle.deduction,
+            savings: checkOracle.savings,
+            loan_balance: checkOracle.loan_balance,
+            retirement: checkOracle.retirement,
+          }
+          : null,
+        acct2: checkOracle2
+          ? {
+            deduction: checkOracle2.deduction,
+            savings: checkOracle2.savings,
+            loan_balance: checkOracle2.loan_balance,
+            retirement: checkOracle2.retirement,
+          }
+          : null,
+      });
+    } catch (error) {
+      console.error("Error:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Server error, please try again later.",
+      });
+    }
+  });
+
+
   ////////
   app.post('/api/change', async (req, res) => {
 
