@@ -107,9 +107,7 @@ await client.connect().then(() => {
         .json({ success: false, message: "Oracle Number Not Found" });
     }
 
-    if (krtlogin && !krtlogin.password) {
-      return res.status(400).json({ success: false, message: "Please, Create An Account" })
-    }
+   
 
     const match = await bcrypt.compare(pword, krtlogin.password);
     if (!match) {
