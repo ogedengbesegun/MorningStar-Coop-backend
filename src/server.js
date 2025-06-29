@@ -4,13 +4,12 @@
 
 
 
-
-
 import bcrypt from 'bcrypt';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
 import { MongoClient } from 'mongodb';
+// import capitalized from '../utilities/capitalizedEword';
 
 dotenv.config();
 
@@ -77,7 +76,7 @@ await client.connect().then(() => {
     const hashedPassword = await bcrypt.hash(pword, saltRounds);
 
     const signup = await userslog.insertOne({
-      full_name: fullname,
+      full_name: capitalized(fullname),
       oracle: oracleNum,
       password: hashedPassword,
     });
@@ -107,7 +106,7 @@ await client.connect().then(() => {
         .json({ success: false, message: "Oracle Number Not Found" });
     }
 
-   
+
 
     const match = await bcrypt.compare(pword, krtlogin.password);
     if (!match) {
@@ -239,3 +238,15 @@ await client.connect().then(() => {
 
 
 // startServer();
+
+
+
+////////////////
+////capitalize every word and trim()
+function capitalized(str) {
+  return str
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ').trim();
+}
+// console.log(capitalized(`olakunle divine grace`))
