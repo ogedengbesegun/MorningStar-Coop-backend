@@ -76,7 +76,7 @@ await client.connect().then(() => {
     const hashedPassword = await bcrypt.hash(pword, saltRounds);
 
     const signup = await userslog.insertOne({
-      full_name: capitalized(fullname),
+      full_name: capitalized(fullname.trim()),
       oracle: oracleNum,
       password: hashedPassword,
     });
@@ -247,6 +247,6 @@ function capitalized(str) {
   return str
     .split(' ')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(' ').trim();
+    .join(' ');
 }
 // console.log(capitalized(`olakunle divine grace`))
