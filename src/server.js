@@ -129,75 +129,81 @@ await client.connect().then(() => {
 
 
 
-  
 
-app.post('/api/msc_monthly_2025', async (req, res) => {
-  const { lastMonth, thisMonth, newOracle } = req.body;
 
-  try {
-    const checkOracle = await msc_monthly_2025.findOne({
-      oracle: newOracle,
-      month: lastMonth,
-    });
+  app.post('/api/msc_monthly_2025', async (req, res) => {
+    const { lastMonth, thisMonth, newOracle } = req.body;
 
-    const checkOracle2 = await msc_monthly_2025.findOne({
-      oracle: newOracle,
-      month: thisMonth,
-    });
-
-    // If both are missing
-    if (!checkOracle && !checkOracle2) {
-      return res.status(404).json({
-        success: false,
-        message: `No records found for you. Please check back.`,
-        acct: null,
-        acct2: '0', // default for thisMonth
+    try {
+      const checkOracle = await msc_monthly_2025.findOne({
+        oracle: newOracle,
+        month: lastMonth,
       });
-    }
 
-    // If current month only is missing
-    if (!checkOracle2) {
-      return res.status(200).json({
-        success: true,
-        message: 'Current month record not available. Returning previous month only.',
-        acct: checkOracle
-          ? {
+      const checkOracle2 = await msc_monthly_2025.findOne({
+        oracle: newOracle,
+        month: thisMonth,
+      });
+
+      // If both are missing
+      if (!checkOracle && !checkOracle2) {
+        return res.status(404).json({
+          success: false,
+          message: `No records found for you. Please check back.`,
+          acct: null,
+          acct2: '0', // default for thisMonth
+        });
+      }
+
+      // If current month only is missing
+      if (!checkOracle2) {
+        return res.status(200).json({
+          success: true,
+          message: 'Current month record not available. Returning previous month only.',
+          acct: checkOracle
+            ? {
               deduction: checkOracle.deduction,
               savings: checkOracle.savings,
               loan_balance: checkOracle.loan_balance,
               retirement: checkOracle.retirement,
+              interest_bal: checkOracle.interest_bal,
+              // soft_loan_bal: checkOracle.soft_loan_bal,
             }
-          : null,
-        acct2: '0',
-      });
-    }
+            : null,
+          acct2: '0',
+        });
+      }
 
-    // If both exist
-    return res.status(200).json({
-      success: true,
-      acct: checkOracle
-        ? {
+      // If both exist
+      return res.status(200).json({
+        success: true,
+        acct: checkOracle
+          ? {
             deduction: checkOracle.deduction,
             savings: checkOracle.savings,
             loan_balance: checkOracle.loan_balance,
             retirement: checkOracle.retirement,
+            interest_bal: checkOracle.interest_bal,
+            // soft_loan_bal: checkOracle.soft_loan_bal,
           }
-        : null,
-      acct2: {
-        deduction: checkOracle2.deduction,
-        savings: checkOracle2.savings,
-        loan_balance: checkOracle2.loan_balance,
-        retirement: checkOracle2.retirement,
-      },
-    });
-  } catch (error) {
-    console.error("Error:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Server error, please try again later.",
-    });
-  }
-});
+          : null,
+        acct2: {
+          deduction: checkOracle2.deduction,
+          savings: checkOracle2.savings,
+          loan_balance: checkOracle2.loan_balance,
+          retirement: checkOracle2.retirement,
+          interest_bal: checkOracle2.interest_bal,
+          // soft_loan_bal: checkOracle2.soft_loan_bal,
+        },
+      });
+    } catch (error) {
+      console.error("Error:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Server error, please try again later.",
+      });
+    }
+  });
 
   ////////
   app.post('/api/change', async (req, res) => {
