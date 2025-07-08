@@ -118,7 +118,9 @@ await client.connect().then(() => {
 
     res.status(200).json({
       success: true,
-      message: `${krtlogin.full_name.split(" ")[1]} Welcome to Morning Star Cooperative Society`,
+      message: `${krtlogin.full_name.split(" ")[1]
+        ?? krtlogin.full_name.split(" ")[0]
+        } Welcome to Morning Star Cooperative Society`,
       user: {
         id: krtlogin._id,
         full_name: krtlogin.full_name,
