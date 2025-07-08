@@ -157,6 +157,7 @@ await client.connect().then(() => {
 
       // If current month only is missing
       if (!checkOracle2) {
+
         return res.status(200).json({
           success: true,
           message: 'Current month record not available. Returning previous month only.',
@@ -166,8 +167,8 @@ await client.connect().then(() => {
               savings: checkOracle.savings,
               loan_balance: checkOracle.loan_balance,
               retirement: checkOracle.retirement,
+              soft_loanBal: checkOracle.soft_loanBal,
               interest_bal: checkOracle.interest_bal,
-              // soft_loan_bal: checkOracle.soft_loan_bal,
             }
             : null,
           acct2: '0',
@@ -183,8 +184,8 @@ await client.connect().then(() => {
             savings: checkOracle.savings,
             loan_balance: checkOracle.loan_balance,
             retirement: checkOracle.retirement,
+            soft_loanBal: checkOracle.soft_loanBal,
             interest_bal: checkOracle.interest_bal,
-            // soft_loan_bal: checkOracle.soft_loan_bal,
           }
           : null,
         acct2: {
@@ -192,8 +193,8 @@ await client.connect().then(() => {
           savings: checkOracle2.savings,
           loan_balance: checkOracle2.loan_balance,
           retirement: checkOracle2.retirement,
+          soft_loanBal: checkOracle2.soft_loanBal,
           interest_bal: checkOracle2.interest_bal,
-          // soft_loan_bal: checkOracle2.soft_loan_bal,
         },
       });
     } catch (error) {
