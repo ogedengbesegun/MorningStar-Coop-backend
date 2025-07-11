@@ -135,7 +135,14 @@ await client.connect().then(() => {
 
   app.post('/api/msc_monthly_2025', async (req, res) => {
     const { lastMonth, thisMonth, newOracle } = req.body;
-
+    // const userData = {
+    //   oracle: newOracle,
+    //   last: lastMonth,
+    //   this: thisMonth,
+    // };
+    // localStorage.setItem("oracle", `${userData.oracle}`);
+    // localStorage.setItem("last", `${userData.last}`);
+    // localStorage.setItem("this", `${userData.this}`);
     try {
       const checkOracle = await msc_monthly_2025.findOne({
         oracle: newOracle,
