@@ -264,7 +264,7 @@ await client.connect().then(() => {
   ////////////////////
   app.post('/api/monthly', async (req, res) => {
     const { year, month, kiporacle } = req.body;
-    const showMonthly = msc_monthly_2025.findOne({ oracle: kiporacle, month: month, yr: year });
+    const showMonthly =await msc_monthly_2025.findOne({ oracle: kiporacle, month: month, yr: year });
     if (!year || !month || !kiporacle) {
       return res.status(404).json({ success: false, message: "Please Select Year and Click Month" })
     }
