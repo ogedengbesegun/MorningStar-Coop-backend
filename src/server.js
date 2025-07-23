@@ -261,7 +261,35 @@ await client.connect().then(() => {
     })
 
   })
+  ////////////////////
+  app.post('/api/monthly', async (req, res) => {
+    const { year, month, kiporacle } = req.body;
+    const showMonthly = msc_monthly_2025.findOne({ oracle: kiporacle, month: month, yr: year });
+    if (!year || !month || !kiporacle) {
+      return res.status(404).json({ success: false, message: "Please Select Year and Click Month" })
+    }
 
+    if (!showMonthly) {
+      return res.status(404).json({ success: false, message: "No record found for this month" })
+    }
+
+    // const showMonthly2 = await msc_monthly_2026.findOne({ oracle: kiporacle, month: month, yr: year });
+    // const showMonthly3 = await msc_monthly_2027.findOne({ oracle: kiporacle, month: month, yr: year });
+
+    res.status(200).json({
+      success: true,
+      message: `Records fetched Successfully for ${month} ${year}`,
+      data: {
+        savings: showMonthly.savings ?? '0',
+        deduction: showMonthly.deduction ?? '0',
+        loan_balance: showMonthly.loan_balance ?? '0',
+        retirement: showMonthly.retirement ?? '0',
+        soft_loanBal: showMonthly.soft_loanBal ?? '0',
+        interest_bal: showMonthly.interest_bal ?? '0',
+      }
+    })
+  }
+  )
 
 
   app.listen(PORT, () => {
