@@ -9,7 +9,6 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
 import { MongoClient } from 'mongodb';
-// import capitalized from '../utilities/capitalizedEword';
 
 dotenv.config();
 
@@ -312,4 +311,3 @@ function capitalized(str) {
     .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(' ');
 }
-// console.log(capitalized(`olakunle divine grace`))
