@@ -171,12 +171,12 @@ await client.connect().then(() => {
           message: 'Current month record not available. Returning previous month only.',
           acct: checkOracle
             ? {
-              deduction: checkOracle.deduction,
-              savings: checkOracle.savings,
-              loan_balance: checkOracle.loan_balance,
-              retirement: checkOracle.retirement,
-              soft_loanBal: checkOracle.soft_loanBal,
-              interest_bal: checkOracle.interest_bal,
+              deduction: checkOracle.deduction ?? "0",
+              savings: checkOracle.savings ?? "0",
+              loan_balance: checkOracle.loan_balance ?? "0",
+              retirement: checkOracle.retirement ?? "0",
+              soft_loanBal: checkOracle.soft_loanBal ?? "0",
+              interest_bal: checkOracle.interest_bal ?? "0",
             }
             : null,
           acct2: '0',
@@ -188,21 +188,21 @@ await client.connect().then(() => {
         success: true,
         acct: checkOracle
           ? {
-            deduction: checkOracle.deduction,
-            savings: checkOracle.savings,
-            loan_balance: checkOracle.loan_balance,
-            retirement: checkOracle.retirement,
-            soft_loanBal: checkOracle.soft_loanBal,
-            interest_bal: checkOracle.interest_bal,
+            deduction: checkOracle.deduction ?? "0",
+            savings: checkOracle.savings ?? "0",
+            loan_balance: checkOracle.loan_balance ?? "0",
+            retirement: checkOracle.retirement ?? "0",
+            soft_loanBal: checkOracle.soft_loanBal ?? "0",
+            interest_bal: checkOracle.interest_bal ?? "0",
           }
           : null,
         acct2: {
-          deduction: checkOracle2.deduction,
-          savings: checkOracle2.savings,
-          loan_balance: checkOracle2.loan_balance,
-          retirement: checkOracle2.retirement,
-          soft_loanBal: checkOracle2.soft_loanBal,
-          interest_bal: checkOracle2.interest_bal,
+          deduction: checkOracle2.deduction ?? "0",
+          savings: checkOracle2.savings ?? "0",
+          loan_balance: checkOracle2.loan_balance ?? "0",
+          retirement: checkOracle2.retirement ?? "0",
+          soft_loanBal: checkOracle2.soft_loanBal ?? "0",
+          interest_bal: checkOracle2.interest_bal ?? "0",
         },
       });
     } catch (error) {
@@ -263,7 +263,7 @@ await client.connect().then(() => {
   ////////////////////
   app.post('/api/monthly', async (req, res) => {
     const { year, month, kiporacle } = req.body;
-    const showMonthly =await msc_monthly_2025.findOne({ oracle: kiporacle, month: month, yr: year });
+    const showMonthly = await msc_monthly_2025.findOne({ oracle: kiporacle, month: month, yr: year });
     if (!year || !month || !kiporacle) {
       return res.status(404).json({ success: false, message: "Please Select Year and Click Month" })
     }
