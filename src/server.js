@@ -289,7 +289,16 @@ await client.connect().then(() => {
     })
   }
   )
+  /////
+  app.post('/api/uploadcsv', async (req, res) => {
+    const { data } = req.body;
+    const lookup = await msc_monthly_2025.findOne({ yr: data.yr, month: data.month })
+    // if(lookup){
+    if (lookup) {
+      return res.status(400).json({ success: false, message: `Records for ${data.month} ${data.yr} already exist` })
+    }
 
+  })
 
   app.listen(PORT, () => {
     console.log(`🚀 Server running at ${PORT}`);
