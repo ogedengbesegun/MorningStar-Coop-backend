@@ -292,12 +292,12 @@ await client.connect().then(() => {
   /////
   app.post('/api/uploadcsv', async (req, res) => {
     const { data } = req.body;
-    const lookup = await msc_monthly_2025.findOne({ yr: data.yr, month: data.month })
+    const lookup = await msc_monthly_2025.findOne({ yr: '2025', month: 'july' })
     // if(lookup){
     if (!lookup) {
       return res.status(400).json({ success: false, message: `Please Upload, ${data.month} ${data.yr} does not exist ` })
     }
-res.status(200).json({success:true,message:`Records for ${data.month} ${data.yr} already exist`})
+res.status(200).json({success:true,message:`Records for ${lookup.yr} ${lookup.month} already exist`})
   })
 
   app.listen(PORT, () => {
