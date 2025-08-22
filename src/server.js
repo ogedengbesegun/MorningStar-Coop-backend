@@ -297,8 +297,51 @@ await client.connect().then(() => {
     if (!lookup) {
       return res.status(400).json({ success: false, message: `Please Upload, ${data.month} ${data.yr} does not exist ` })
     }
-res.status(200).json({success:true,message:`Records for ${lookup.yr} ${lookup.month} already exist`})
+    res.status(200).json({ success: true, message: `Records for ${lookup.yr} ${lookup.month} already exist` })
   })
+
+  app.post('/api/submitjoinus', async (req, res) => {
+    const { name, oracle, phone, dob, amount, picture } = req.body
+    if (!name || !oracle || !phone || !dob || !amount || !picture) {
+      return res.status(400).json({ success: false, message: "Please fill in all fields" });
+    }
+    const joinus = await db.collection('joinus').insertOne({
+      name: capitalized(name.trim()),
+      oracle: oracle.trim(),
+      phone: phone.trim(),
+      dob: dob.trim(),
+      amount: amount.trim(),
+      picture: picture.trim(),
+      status: 'pending',
+      createdAt: new Date(),
+    });
+    res.json({
+      success: true,
+      message: `Thank you ${name?.split(' ')[0]}, Your request is being processed. We will get back to you soon.`,
+      id: joinus.insertedId
+    })
+  });
+  ////////
+app.post('/api/savingLoanBal',async(req,res) =>{
+  const {oracle}=req.body;
+  if(!oracle){
+    return res.status(400).json({success:false,message:"Valid Oracle Number is required"})
+  }
+  const findOracle= await msc_monthly_2025.findOne({oracle:oracle})
+  if(!findOracle){
+    return res.status(404).json({success:false,message:"No record found for this Oracle Number"})
+  }
+  res.status(200).json({
+    success:true,
+    message:`Record fetched Successfully for Oracle Number ${oracle}`,
+    data:{
+      total_savings:findOracle.savings??'0',
+      total_loan_balance:findOracle.loan_balance??'0',
+      total_soft_loanBal:findOracle.soft_loanBal??'0',
+      total_interest_bal:findOracle.interest_bal??'0',
+    }
+  })
+})
 
   app.listen(PORT, () => {
     console.log(`🚀 Server running at ${PORT}`);
