@@ -324,7 +324,7 @@ await client.connect().then(() => {
   ////////
 app.post('/api/savingLoanBal',async(req,res) =>{
   const {oracle}=req.body;
-  if(!oracle){
+  if(NaN(oracle) || oracle.length<5){
     return res.status(400).json({success:false,message:"Valid Oracle Number is required"})
   }
   const findOracle= await msc_monthly_2025.findOne({oracle:oracle})
