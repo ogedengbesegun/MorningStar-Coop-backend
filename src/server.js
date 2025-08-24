@@ -295,10 +295,17 @@ await client.connect().then(() => {
     // if(lookup){
     if (lookup) {
       return res.status(400).json({ success: false, message: `Records for, ${lookup.yr} ${lookup.month} already exist` })
-    }
-    res.status(200).json({ success: true, message: `Please Upload ${lookup.yr} ${lookup.month} does not exist  ` })
-  })
+    } else {
+      data.forEach(async (item) => {
+        await msc_monthly_2025.insertMany(item)
+      })
+      res.status(200).json({ success: true, message: `Please Upload ${lookup.yr} ${lookup.month} does not exist  ` })
 
+    }
+  })
+  /////
+
+  ///////////
   app.post('/api/submitjoinus', async (req, res) => {
     const { name, oracle, phone, dob, amount, picture } = req.body
     if (!name || !oracle || !phone || !dob || !amount || !picture) {
