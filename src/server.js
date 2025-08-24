@@ -2,7 +2,7 @@
 
 
 
-
+import { c_month, c_year } from "../../utilities/mydate";
 
 import bcrypt from 'bcrypt';
 import cors from 'cors';
@@ -291,13 +291,13 @@ await client.connect().then(() => {
   )
   /////
   app.post('/api/uploadcsv', async (req, res) => {
-    const { data } = req.body;
-    const lookup = await msc_monthly_2025.findOne({ yr: '2025', month: 'july' })
+    const { data, monthly, yearly } = req.body;
+    const lookup = await msc_monthly_2025.findOne({ yr: yearly, month: monthly })
     // if(lookup){
-    if (!lookup) {
-      return res.status(400).json({ success: false, message: `Please Upload, ${data.month} ${data.yr} does not exist ` })
+    if (lookup) {
+      return res.status(400).json({ success: false, message: `Records for, ${lookup.yr} ${lookup.month} already exist` })
     }
-    res.status(200).json({ success: true, message: `Records for ${lookup.yr} ${lookup.month} already exist` })
+    res.status(200).json({ success: true, message: `Please Upload ${lookup.yr} ${lookup.month} does not exist  ` })
   })
 
   app.post('/api/submitjoinus', async (req, res) => {
@@ -322,26 +322,26 @@ await client.connect().then(() => {
     })
   });
   ////////
-app.post('/api/savingLoanBal',async(req,res) =>{
-  const {oracle}=req.body;
-  // if(!oracle || oracle.length<5){
-  //   return res.status(400).json({success:false,message:"Valid Oracle Number is required"})
-  // }
-  const findOracle= await msc_monthly_2025.findOne({oracle:oracle})
-  if(!findOracle){
-    return res.status(404).json({success:false,message:"No record found for this Oracle Number"})
-  }
-  res.status(200).json({
-    success:true,
-    message:`Record fetched Successfully for Oracle Number ${oracle}`,
-    data:{
-      total_savings:findOracle.savings??'0',
-      total_loan_balance:findOracle.loan_balance??'0',
-      total_soft_loanBal:findOracle.soft_loanBal??'0',
-      total_interest_bal:findOracle.interest_bal??'0',
+  app.post('/api/savingLoanBal', async (req, res) => {
+    const { oracle } = req.body;
+    // if(!oracle || oracle.length<5){
+    //   return res.status(400).json({success:false,message:"Valid Oracle Number is required"})
+    // }
+    const findOracle = await msc_monthly_2025.findOne({ oracle: oracle, month: c_month, yr: c_year })
+    if (!findOracle) {
+      return res.status(404).json({ success: false, message: "No record found for this Oracle Number" })
     }
+    res.status(200).json({
+      success: true,
+      message: `Record fetched Successfully for Oracle Number ${oracle}`,
+      data: {
+        total_savings: findOracle.savings ?? '0',
+        total_loan_balance: findOracle.loan_balance ?? '0',
+        total_soft_loanBal: findOracle.soft_loanBal ?? '0',
+        total_interest_bal: findOracle.interest_bal ?? '0',
+      }
+    })
   })
-})
 
   app.listen(PORT, () => {
     console.log(`🚀 Server running at ${PORT}`);
