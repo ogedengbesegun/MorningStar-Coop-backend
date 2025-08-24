@@ -289,20 +289,48 @@ await client.connect().then(() => {
   }
   )
   /////
-  app.post('/api/uploadcsv', async (req, res) => {
-    const { data, monthly, yearly } = req.body;
-    const lookup = await msc_monthly_2025.findOne({ yr: yearly, month: monthly })
-    // if(lookup){
-    if (lookup) {
-      return res.status(400).json({ success: false, message: `Records for, ${lookup.yr} ${lookup.month} already exist` })
-    } else {
-      data.forEach(async (item) => {
-        await msc_monthly_2025.insertMany(item)
-      })
-      res.status(200).json({ success: true, message: `Please Upload ${lookup.yr} ${lookup.month} does not exist  ` })
+  // app.post('/api/uploadcsv', async (req, res) => {
+  //   const { data, monthly, yearly } = req.body;
+  //   const lookup = await msc_monthly_2025.findOne({ yr: yearly, month: monthly })
+  //   // if(lookup){
+  //   if (lookup) {
+  //     return res.status(400).json({ success: false, message: `Records for, ${lookup.yr} ${lookup.month} already exist` })
+  //   } else {
+  //     data.forEach(async (item) => {
+  //       await msc_monthly_2025.insertMany(item)
+  //     })
+  //     res.status(200).json({ success: true, message: `Please Upload ${lookup.yr} ${lookup.month} does not exist  ` })
 
+  //   }
+  // })
+  app.post('/api/uploadcsv', async (req, res) => {
+    try {
+      const { data, monthly, yearly } = req.body;
+
+      // check if record exists
+      const lookup = await msc_monthly_2025.findOne({ yr: yearly, month: monthly });
+      if (lookup) {
+        return res.status(400).json({
+          success: false,
+          message: `Records for ${lookup.yr} ${lookup.month} already exist`
+        });
+      }
+
+      // bulk insert at once (not in a loop)
+      await msc_monthly_2025.insertMany(data, { ordered: false });
+
+      return res.status(200).json({
+        success: true,
+        message: `Records for ${yearly} ${monthly} uploaded successfully`
+      });
     }
-  })
+    catch (error) {
+      console.error("Error during CSV upload:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Server error during CSV upload, please try again later."
+      });
+    }});
   /////
 
   ///////////
