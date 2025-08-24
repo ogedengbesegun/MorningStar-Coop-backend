@@ -296,11 +296,11 @@ await client.connect().then(() => {
     if (lookup) {
       return res.status(400).json({ success: false, message: `Records for, ${lookup.yr} ${lookup.month} already exist` })
     } else {
-
-      res.status(200).json({ success: true, message: `Please Upload ${lookup.yr} ${lookup.month} does not exist  ` })
       data.forEach(async (item) => {
         await msc_monthly_2025.insertMany(item)
       })
+      res.status(200).json({ success: true, message: `Please Upload ${lookup.yr} ${lookup.month} does not exist  ` })
+
     }
   })
   /////
