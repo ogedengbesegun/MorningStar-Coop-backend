@@ -314,15 +314,16 @@ await client.connect().then(() => {
           success: false,
           message: `Records for ${lookup.yr} ${lookup.month} already exist`
         });
+      } else {
+        // bulk insert at once (not in a loop)
+
+        await msc_monthly_2025.insertMany(data, { ordered: false });
+        return res.status(200).json({
+          success: true,
+          message: `Records for ${yearly} ${monthly} uploaded successfully`
+        });
       }
 
-      // bulk insert at once (not in a loop)
-      await msc_monthly_2025.insertMany(data, { ordered: false });
-
-      return res.status(200).json({
-        success: true,
-        message: `Records for ${yearly} ${monthly} uploaded successfully`
-      });
     }
     catch (error) {
       console.error("Error during CSV upload:", error);
@@ -330,7 +331,8 @@ await client.connect().then(() => {
         success: false,
         message: "Server error during CSV upload, please try again later."
       });
-    }});
+    }
+  });
   /////
 
   ///////////
