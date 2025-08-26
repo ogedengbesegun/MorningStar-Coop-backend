@@ -132,24 +132,19 @@ await client.connect().then(() => {
 
 
   app.post('/api/msc_monthly_2025', async (req, res) => {
-    const { lastMonth, thisMonth, newOracle } = req.body;
-    // const userData = {
-    //   oracle: newOracle,
-    //   last: lastMonth,
-    //   this: thisMonth,
-    // };
-    // localStorage.setItem("oracle", `${userData.oracle}`);
-    // localStorage.setItem("last", `${userData.last}`);
-    // localStorage.setItem("this", `${userData.this}`);
+    const { lastMonth, thisMonth, yr, newOracle } = req.body;
+
     try {
       const checkOracle = await msc_monthly_2025.findOne({
         oracle: newOracle,
         month: lastMonth,
+        yr: yr,
       });
 
       const checkOracle2 = await msc_monthly_2025.findOne({
         oracle: newOracle,
         month: thisMonth,
+        yr: yr,
       });
 
       // If both are missing
@@ -176,6 +171,7 @@ await client.connect().then(() => {
               retirement: checkOracle.retirement ?? "0",
               soft_loanBal: checkOracle.soft_loanBal ?? "0",
               interest_bal: checkOracle.interest_bal ?? "0",
+              bank: checkOracle.bank ?? "0"
             }
             : null,
           acct2: '0',
@@ -193,6 +189,7 @@ await client.connect().then(() => {
             retirement: checkOracle.retirement ?? "0",
             soft_loanBal: checkOracle.soft_loanBal ?? "0",
             interest_bal: checkOracle.interest_bal ?? "0",
+            bank: checkOracle.bank ?? "0",
           }
           : null,
         acct2: {
@@ -202,6 +199,7 @@ await client.connect().then(() => {
           retirement: checkOracle2.retirement ?? "0",
           soft_loanBal: checkOracle2.soft_loanBal ?? "0",
           interest_bal: checkOracle2.interest_bal ?? "0",
+          bank: checkOracle2.bank ?? "0",
         },
       });
     } catch (error) {
