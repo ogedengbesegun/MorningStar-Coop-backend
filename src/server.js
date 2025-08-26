@@ -288,21 +288,7 @@ await client.connect().then(() => {
     })
   }
   )
-  /////
-  // app.post('/api/uploadcsv', async (req, res) => {
-  //   const { data, monthly, yearly } = req.body;
-  //   const lookup = await msc_monthly_2025.findOne({ yr: yearly, month: monthly })
-  //   // if(lookup){
-  //   if (lookup) {
-  //     return res.status(400).json({ success: false, message: `Records for, ${lookup.yr} ${lookup.month} already exist` })
-  //   } else {
-  //     data.forEach(async (item) => {
-  //       await msc_monthly_2025.insertMany(item)
-  //     })
-  //     res.status(200).json({ success: true, message: `Please Upload ${lookup.yr} ${lookup.month} does not exist  ` })
 
-  //   }
-  // })
   app.post('/api/uploadcsv', async (req, res) => {
     try {
       const { data, monthly, yearly } = req.body;
