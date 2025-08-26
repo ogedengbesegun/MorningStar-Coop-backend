@@ -278,6 +278,7 @@ await client.connect().then(() => {
       data: {
         savings: showMonthly.savings ?? '0',
         deduction: showMonthly.deduction ?? '0',
+        bank: showMonthly.bank ?? '0',
         loan_balance: showMonthly.loan_balance ?? '0',
         retirement: showMonthly.retirement ?? '0',
         soft_loanBal: showMonthly.soft_loanBal ?? '0',
