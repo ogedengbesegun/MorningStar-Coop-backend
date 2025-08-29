@@ -348,7 +348,7 @@ await client.connect().then(() => {
     // if(!oracle || oracle.length<5){
     //   return res.status(400).json({success:false,message:"Valid Oracle Number is required"})
     // }
-    const findOracle = await msc_monthly_2025.findOne({ oracle: oracle, month: c_month, yr: c_year })
+    const findOracle = await msc_monthly_2025.findOne({ oracle: oracle, month: "july", yr: "2025" })
     if (!findOracle) {
       return res.status(404).json({ success: false, message: "No record found for this Oracle Number" })
     }
