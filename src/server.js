@@ -3,6 +3,7 @@
 
 
 
+import { c_month, c_year } from '@/utilities/mydate';
 import bcrypt from 'bcrypt';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -348,7 +349,7 @@ await client.connect().then(() => {
     // if(!oracle || oracle.length<5){
     //   return res.status(400).json({success:false,message:"Valid Oracle Number is required"})
     // }
-    const findOracle = await msc_monthly_2025.findOne({ oracle:"180095", month: "july", yr: "2025" })
+    const findOracle = await msc_monthly_2025.findOne({ oracle:oracle, month: c_month-1, yr: c_year })
     if (!findOracle) {
       return res.status(404).json({ success: false, message: "No record found for this Oracle Number" })
     }
