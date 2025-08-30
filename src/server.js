@@ -374,7 +374,7 @@ await client.connect().then(() => {
     // }
     const findOracle = await msc_monthly_2025.findOne({ oracle: oracle, month: c_month, yr: c_year.toString() })
     if (!findOracle) {
-      return res.status(404).json({ success: false, message: `record for ${c_month - 1}, ${c_year} found for this Oracle Number ` })
+      return res.status(404).json({ success: false, message: `record for ${c_month}, ${c_year} NOT found for this Oracle Number ` })
     }
     res.status(200).json({
       success: true,
