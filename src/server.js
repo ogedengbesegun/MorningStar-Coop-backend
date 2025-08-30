@@ -39,7 +39,7 @@ await client.connect().then(() => {
 
   const ddate = new Date();
   const c_year = ddate.getFullYear();
-  const month = ddate.getMonth()
+  const month = ddate.getMonth()+1;
   const monthArray = [
     "january", "february", "march", "april",
     "may", "june", "july", "august",
