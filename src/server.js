@@ -40,63 +40,63 @@ await client.connect().then(() => {
   const ddate = new Date();
   const c_year = ddate.getFullYear();
   const month = ddate.getMonth()
-const monthArray = [
-  "january", "february", "march", "april",
-  "may", "june", "july", "august",
-  "september", "october", "november", "december"
-];
+  const monthArray = [
+    "january", "february", "march", "april",
+    "may", "june", "july", "august",
+    "september", "october", "november", "december"
+  ];
 
-let c_month;
+  let c_month;
 
-// match numeric month to month name
-for (let i = 0; i < monthArray.length; i++) {
-  if (i + 1 === month) {
-    c_month = monthArray[i];
-    break;
+  // match numeric month to month name
+  for (let i = 0; i < monthArray.length; i++) {
+    if (i + 1 === month) { 
+      c_month = monthArray[i - 1]; ///this will show a month less 1
+      break;
+    }
   }
-}
 
-    /////////////////////////
-    app.post('/api/signup', async (req, res) => {
-      const { fullname, oracleNum, pword, cpword } = req.body;
+  /////////////////////////
+  app.post('/api/signup', async (req, res) => {
+    const { fullname, oracleNum, pword, cpword } = req.body;
 
-      const aMember = await msc_monthly_2025.findOne({ oracle: oracleNum });
-
-
-      if (fullname === '' || oracleNum === '' || pword === '') {
-        return res.status(404).json({ success: false, message: 'Please fill in all fields' });
-      }
-
-      if (pword.length < 6) {
-        return res.status(400).json({ success: false, message: 'Password must be at least Min 6 and Max 15 characters long' })
-      };
-
-      if (pword !== cpword) {
-        return res.status(400).json({ success: false, message: 'Passwords do not match, Please check and try again' })
-      };
-
-      if (!aMember) {
-        return res.status(404).json({ success: false, message: "Sorry, You are Not a Member of this Cooperative Society" })
-      }
+    const aMember = await msc_monthly_2025.findOne({ oracle: oracleNum });
 
 
-      const checkOracle = await userslog.findOne({ oracle: oracleNum });
-      // const findfullname=await userslog.findOne({})
-      if (checkOracle) {
-        return res.status(400).json({ success: false, message: `A member with this Oracle Number already exist. Please check and try again` })
-      }
-      //////////
-      const saltRounds = 10;
-      const hashedPassword = await bcrypt.hash(pword, saltRounds);
+    if (fullname === '' || oracleNum === '' || pword === '') {
+      return res.status(404).json({ success: false, message: 'Please fill in all fields' });
+    }
 
-      const signup = await userslog.insertOne({
-        full_name: capitalized(fullname.trim()),
-        oracle: oracleNum,
-        password: hashedPassword,
-      });
+    if (pword.length < 6) {
+      return res.status(400).json({ success: false, message: 'Password must be at least Min 6 and Max 15 characters long' })
+    };
 
-      res.status(201).json({ success: true, message: `${fullname} with Oracle Num ${oracleNum} is Registered Successfully`, id: signup.insertedId });
+    if (pword !== cpword) {
+      return res.status(400).json({ success: false, message: 'Passwords do not match, Please check and try again' })
+    };
+
+    if (!aMember) {
+      return res.status(404).json({ success: false, message: "Sorry, You are Not a Member of this Cooperative Society" })
+    }
+
+
+    const checkOracle = await userslog.findOne({ oracle: oracleNum });
+    // const findfullname=await userslog.findOne({})
+    if (checkOracle) {
+      return res.status(400).json({ success: false, message: `A member with this Oracle Number already exist. Please check and try again` })
+    }
+    //////////
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(pword, saltRounds);
+
+    const signup = await userslog.insertOne({
+      full_name: capitalized(fullname.trim()),
+      oracle: oracleNum,
+      password: hashedPassword,
     });
+
+    res.status(201).json({ success: true, message: `${fullname} with Oracle Num ${oracleNum} is Registered Successfully`, id: signup.insertedId });
+  });
 
 
 
@@ -267,6 +267,14 @@ for (let i = 0; i < monthArray.length; i++) {
       })
 
     };
+    // const  dataquery= {
+    //   oracle: oracle,
+    //   month:month,
+    //   yr:yr,
+    // }
+    // oracle 
+    // month
+    // year
 
     res.status(200).json({
       success: true, message: "Password is Successfully Changed"
@@ -364,9 +372,9 @@ for (let i = 0; i < monthArray.length; i++) {
     // if(!oracle || oracle.length<5){
     //   return res.status(400).json({success:false,message:"Valid Oracle Number is required"})
     // }
-    const findOracle = await msc_monthly_2025.findOne({ oracle: oracle, month: c_month - 1, yr: c_year })
+    const findOracle = await msc_monthly_2025.findOne({ oracle: oracle, month: c_month, yr: c_year.toString() })
     if (!findOracle) {
-      return res.status(404).json({ success: false, message: "No record found for this Oracle Number" })
+      return res.status(404).json({ success: false, message: `record for ${c_month - 1}, ${c_year} found for this Oracle Number ` })
     }
     res.status(200).json({
       success: true,
