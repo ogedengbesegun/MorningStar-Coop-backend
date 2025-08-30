@@ -39,7 +39,7 @@ await client.connect().then(() => {
 
   const ddate = new Date();
   const c_year = ddate.getFullYear();
-  const month = ddate.getMonth()+1;
+  const month = ddate.getMonth() + 1;
   const monthArray = [
     "january", "february", "march", "april",
     "may", "june", "july", "august",
@@ -50,7 +50,7 @@ await client.connect().then(() => {
 
   // match numeric month to month name
   for (let i = 0; i < monthArray.length; i++) {
-    if (i + 1 === month) { 
+    if (i + 1 === month) {
       c_month = monthArray[i - 1]; ///this will show a month less 1
       break;
     }
@@ -372,9 +372,12 @@ await client.connect().then(() => {
     // if(!oracle || oracle.length<5){
     //   return res.status(400).json({success:false,message:"Valid Oracle Number is required"})
     // }
-    const findOracle = await msc_monthly_2025.findOne({ oracle: oracle, month: c_month, yr: c_year.toString() })
+    const findOracle = await msc_monthly_2025.findOne({
+      oracle: oracle.toString(),
+      month: c_month.toString(), yr: c_year.toString()
+    })
     if (!findOracle) {
-      return res.status(404).json({ success: false, message: `record for ${c_month}, ${c_year} NOT found for this Oracle Number ` })
+      return res.status(404).json({ success: false, message: `record for ${c_month}, ${c_year} NOT found for this Oracle Number ${oracle} ` })
     }
     res.status(200).json({
       success: true,
