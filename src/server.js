@@ -347,9 +347,19 @@ await client.connect().then(() => {
   ///////////
   app.post('/api/submitjoinus', async (req, res) => {
     const { name, oracle, phone, dob, amount, picture } = req.body
+
+
+    /////////
     if (!name || !oracle || !phone || !dob || !amount || !picture) {
       return res.status(400).json({ success: false, message: "Please fill in all fields" });
     }
+    /////
+    /////test if the member exist already
+    const aMember = await userslog.findOne({ oracle: oracle })
+    if (aMember) {
+      return res.status(404).json({ success: false, message: "Sorry, You are already a Member of this Cooperative Society" })
+    }
+    //////////
     const joinus = await db.collection('joinus').insertOne({
       name: capitalized(name.trim()),
       oracle: oracle.trim(),
@@ -366,30 +376,48 @@ await client.connect().then(() => {
       id: joinus.insertedId
     })
   });
+
   ////////
-  app.post('/api/savingLoanBal', async (req, res) => {
-    const { oracle } = req.body;
-    // if(!oracle || oracle.length<5){
-    //   return res.status(400).json({success:false,message:"Valid Oracle Number is required"})
-    // }
-    const findOracle = await msc_monthly_2025.findOne({
-      oracle: oracle,
-      month: c_month.toString(), yr: c_year.toString()
-    })
-    if (!findOracle) {
-      return res.status(404).json({ success: false, message: `record for ${c_month}, ${c_year} NOT found for this Oracle Number ${oracle} ` })
+  app.get('/api/ViewNewMember', async (req, res) => {
+  try {
+    const members = await joinus.find(); // fetch all docs
+
+    if (!members || members.length === 0) {
+      return res.status(404).json({ success: false, message: "No members found" });
     }
-    res.status(200).json({
-      success: true,
-      message: `Record fetched Successfully for Oracle Number ${oracle}`,
-      data: {
-        total_savings: findOracle.savings ?? '0',
-        total_loan_balance: findOracle.loan_balance ?? '0',
-        total_soft_loanBal: findOracle.soft_loanBal ?? '0',
-        total_interest_bal: findOracle.interest_bal ?? '0',
-      }
-    })
-  })
+
+    res.status(200).json({ success: true, data: members });
+
+  } catch (error) {
+    console.error("Error fetching members:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+  ////////
+  // app.post('/api/savingLoanBal', async (req, res) => {
+  //   const { oracle } = req.body;
+  //   // if(!oracle || oracle.length<5){
+  //   //   return res.status(400).json({success:false,message:"Valid Oracle Number is required"})
+  //   // }
+  //   const findOracle = await msc_monthly_2025.findOne({
+  //     oracle: oracle,
+  //     month: c_month.toString(), yr: c_year.toString()
+  //   })
+  //   if (!findOracle) {
+  //     return res.status(404).json({ success: false, message: `record for ${c_month}, ${c_year} NOT found for this Oracle Number ${oracle} ` })
+  //   }
+  //   res.status(200).json({
+  //     success: true,
+  //     message: `Record fetched Successfully for Oracle Number ${oracle}`,
+  //     data: {
+  //       total_savings: findOracle.savings ?? '0',
+  //       total_loan_balance: findOracle.loan_balance ?? '0',
+  //       total_soft_loanBal: findOracle.soft_loanBal ?? '0',
+  //       total_interest_bal: findOracle.interest_bal ?? '0',
+  //     }
+  //   })
+  // })
 
   app.listen(PORT, () => {
     console.log(`🚀 Server running at ${PORT}`);
