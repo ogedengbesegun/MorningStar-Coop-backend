@@ -367,7 +367,7 @@ await client.connect().then(() => {
          We will get back to you soon` })
     }
     //////////
-    const joinus = await db.collection('joinus').insertOne({
+    const newjoinus = await db.collection('joinus').insertOne({
       name: capitalized(name.trim()),
       oracle: oracle.trim(),
       phone: phone.trim(),
@@ -380,7 +380,7 @@ await client.connect().then(() => {
     res.json({
       success: true,
       message: `Thank you ${name?.split(' ')[0]}, Your request is being processed. We will get back to you soon.`,
-      id: joinus.insertedId
+      id: newjoinus.insertedId
     })
   });
 
