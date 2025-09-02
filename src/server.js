@@ -359,6 +359,13 @@ await client.connect().then(() => {
     if (aMember) {
       return res.status(404).json({ success: false, message: "Sorry, You are already a Member of this Cooperative Society" })
     }
+    /////
+    const alreadyMem = await joinus.finOne({ oracle: oracle })
+    if (alreadyMem) {
+      return res.status(404).json({
+        success: false, message: `Thanks ${alreadyMem.name}, you already sent in yourmembership request.
+         We will get back to you soon` })
+    }
     //////////
     const joinus = await db.collection('joinus').insertOne({
       name: capitalized(name.trim()),
@@ -379,20 +386,20 @@ await client.connect().then(() => {
 
   ////////
   app.get('/api/ViewNewMember', async (req, res) => {
-  try {
-    const members = await joinus.find(); // fetch all docs
+    try {
+      const members = await joinus.find(); // fetch all docs
 
-    if (!members || members.length === 0) {
-      return res.status(404).json({ success: false, message: "No members found" });
+      if (!members || members.length === 0) {
+        return res.status(404).json({ success: false, message: "No members found" });
+      }
+
+      res.status(200).json({ success: true, data: members });
+
+    } catch (error) {
+      console.error("Error fetching members:", error);
+      res.status(500).json({ success: false, message: "Server error" });
     }
-
-    res.status(200).json({ success: true, data: members });
-
-  } catch (error) {
-    console.error("Error fetching members:", error);
-    res.status(500).json({ success: false, message: "Server error" });
-  }
-});
+  });
 
   ////////
   // app.post('/api/savingLoanBal', async (req, res) => {
