@@ -389,7 +389,7 @@ await client.connect().then(() => {
   ////////
 app.get('/api/ViewNewMember', async (req, res) => {
   try {
-    const members = await joinus.find(); // fetch all docs
+    const members = await joinus.find().select("name oracle phone amount picture"); // fetch all docs
 
     if (!members || members.length === 0) {
       return res.status(404).json({
