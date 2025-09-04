@@ -363,7 +363,7 @@ await client.connect().then(() => {
     const alreadyMem = await joinus.finOne({ oracle: oracle })
     if (alreadyMem) {
       return res.status(404).json({
-        success: false, message: `Thanks ${alreadyMem.name}, you already sent in yourmembership request.
+        success: false, message: `Thanks ${alreadyMem.name}, you already sent in your membership request.
          We will get back to you soon` })
     }
     //////////
