@@ -393,7 +393,7 @@ await client.connect().then(() => {
         return res.status(404).json({ success: false, message: "No members found" });
       }
 
-      res.status(200).json({ success: true, data: members });
+      res.status(200).json({ success: true, data: members, message: "Members fetched successfully" });
 
     } catch (error) {
       console.error("Error fetching members:", error);
