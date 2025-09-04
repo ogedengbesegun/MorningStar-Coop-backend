@@ -25,6 +25,8 @@ await client.connect().then(() => {
 
   const db = client.db(process.env.DB_MsCoop);
   const userslog = db.collection('userslog');
+  const joinus = db.collection('joinus');
+
   // const msc_2024 = db.collection('msc_2024');
   // const msc_2025 = db.collection('msc_2025');
   // const msc_2026 = db.collection('msc_2026');
