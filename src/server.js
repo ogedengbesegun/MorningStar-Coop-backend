@@ -387,29 +387,32 @@ await client.connect().then(() => {
   });
 
   ////////
-  app.get('/api/ViewNewMember', async (req, res) => {
-    try {
-      const members = await joinus.find(); // fetch all docs
+app.get('/api/ViewNewMember', async (req, res) => {
+  try {
+    const members = await joinus.find(); // fetch all docs
 
-      if (!members || members.length === 0) {
-        return res.status(404).json({ success: false, message: "No members found" });
-      }
-
-      res.status(200).json({
-        success: true, data: {
-          name: members.name,
-          oracle: members.oracle,
-          amount: members.amount,
-          picture: members.picture,
-          phone: members.phone,
-        }, message: "Members fetched successfully"
+    if (!members || members.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No members found"
       });
-
-    } catch (error) {
-      console.error("Error fetching members:", error);
-      res.status(500).json({ success: false, message: "Server error" });
     }
-  });
+
+    res.status(200).json({
+      success: true,
+      data: members,  // send full array
+      message: "Members fetched successfully"
+    });
+
+  } catch (error) {
+    console.error("Error fetching members:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error"
+    });
+  }
+});
+
 
   ////////
   // app.post('/api/savingLoanBal', async (req, res) => {
