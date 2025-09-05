@@ -358,44 +358,7 @@ await client.connect().then(() => {
   /////
 
   ///////////
-  // app.post('/api/submitjoinus', async (req, res) => {
-  //   const { name, oracle, phone, dob, amount, picture } = req.body
-
-
-  //   /////////
-  //   if (!name || !oracle || !phone || !dob || !amount || !picture) {
-  //     return res.status(400).json({ success: false, message: "Please fill in all fields" });
-  //   }
-  //   /////
-  //   /////test if the member exist already
-  //   const aMember = await userslog.findOne({ oracle: oracle })
-  //   if (aMember) {
-  //     return res.status(404).json({ success: false, message: "Sorry, You are already a Member of this Cooperative Society" })
-  //   }
-  //   /////
-  //   const alreadyMem = await db.collection("joinus").findOne({ oracle: oracle })
-  //   if (alreadyMem) {
-  //     return res.status(404).json({
-  //       success: false, message: `Thanks ${alreadyMem.name}, you already sent in your membership request.
-  //        We will get back to you soon` })
-  //   }
-  //   //////////
-  //   const newjoinus = await db.collection('joinus').insertOne({
-  //     name: capitalized(name.trim()),
-  //     oracle: oracle.trim(),
-  //     phone: phone.trim(),
-  //     dob: dob.trim(),
-  //     amount: amount.trim(),
-  //     picture: picture.trim(),
-  //     status: 'pending',
-  //     createdAt: new Date(),
-  //   });
-  //   res.json({
-  //     success: true,
-  //     message: `Thank you ${name?.split(' ')[0]}, Your request is being processed. We will get back to you soon.`,
-  //     id: newjoinus.insertedId
-  //   })
-  // });
+  
 app.post('/api/submitjoinus', async (req, res) => {
   try {
     const { name, oracle, phone, dob, amount, picture } = req.body;
@@ -483,7 +446,70 @@ app.post('/api/submitjoinus', async (req, res) => {
     }
   });
 
+//////////loan request
+app.post('/api/submitLoanRequest', async (req, res) => {
+  try {
+    const { name, oracle, phone, doa, amount, 
+      picture,bankName,bankNumber,bankSort } = req.body;
 
+    // 1. Validate required fields
+    if (!name || !oracle || !phone || !doa || !amount || !picture
+      ||bankName ||bankNumber ||bankSort
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Please fill in all fields"
+      });
+    }
+
+    // 2. Check if already in loanRequest (official member)
+    const aMember = await db.collection("loanRequest").findOne({ oracle: oracle.trim() });
+    if (aMember) {
+      return res.status(400).json({
+        success: false,
+        message: "Sorry, You have already requested for a loan"
+      });
+    }
+
+    // // 3. Check if request already submitted
+    // const alreadyMem = await db.collection("joinus").findOne({ oracle: oracle.trim() });
+    // if (alreadyMem) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     message: `Thanks ${alreadyMem.name}, you already sent in your membership request. We will get back to you soon`
+    //   });
+    // }
+
+    // 4. Insert new request
+    const newloanRequest = await db.collection("loanRequest").insertOne({
+      name: capitalized(name.trim()),
+      oracle: oracle.trim(),
+      phone: phone.trim(),
+      application_date: doa.trim(),
+      bankName:bankName.trim(),
+      bankNumber:bankNumber.trim(),
+      bankSort:bankSort.trim(),
+      amount: amount.trim(),
+      picture: picture.trim(),
+      status: "pending",
+      createdAt: new Date(),
+    });
+
+    // 5. Success response
+    res.status(201).json({
+      success: true,
+      message: `Thank you ${name?.split(" ")[0]}, Your loan request is being processed. We will get back to you soon.`,
+      id: newloanRequest.insertedId
+    });
+  } catch (error) {
+    console.error("Error in /api/loanRequest:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error.message
+    });
+  }
+});
 
   ////////
   // app.post('/api/savingLoanBal', async (req, res) => {
