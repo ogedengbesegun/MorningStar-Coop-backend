@@ -2,13 +2,14 @@
 
 
 
+// import mongoose from "mongoose";
 
 import bcrypt from 'bcrypt';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
 import { MongoClient } from 'mongodb';
-
+// import joinus from '../models/joinus';
 dotenv.config();
 
 const app = express();
@@ -25,7 +26,7 @@ await client.connect().then(() => {
 
   const db = client.db(process.env.DB_MsCoop);
   const userslog = db.collection('userslog');
-  const joinus = db.collection('joinus');
+  // const joinus = db.collection('joinus');
 
   // const msc_2024 = db.collection('msc_2024');
   // const msc_2025 = db.collection('msc_2025');
@@ -57,7 +58,17 @@ await client.connect().then(() => {
       break;
     }
   }
-
+  ///////////mongoose
+  // const joinusSchema = new mongoose.Schema(
+  //   {
+  //     name: { type: String, required: true },
+  //     oracle: { type: String, required: true },
+  //     phone: { type: String, required: true },
+  //     amount: { type: String, required: true },
+  //     picture: { type: String, required: true },
+  //   },
+  //   { timestamps: true }
+  // );
   /////////////////////////
   app.post('/api/signup', async (req, res) => {
     const { fullname, oracleNum, pword, cpword } = req.body;
@@ -347,71 +358,131 @@ await client.connect().then(() => {
   /////
 
   ///////////
-  app.post('/api/submitjoinus', async (req, res) => {
-    const { name, oracle, phone, dob, amount, picture } = req.body
+  // app.post('/api/submitjoinus', async (req, res) => {
+  //   const { name, oracle, phone, dob, amount, picture } = req.body
 
 
-    /////////
+  //   /////////
+  //   if (!name || !oracle || !phone || !dob || !amount || !picture) {
+  //     return res.status(400).json({ success: false, message: "Please fill in all fields" });
+  //   }
+  //   /////
+  //   /////test if the member exist already
+  //   const aMember = await userslog.findOne({ oracle: oracle })
+  //   if (aMember) {
+  //     return res.status(404).json({ success: false, message: "Sorry, You are already a Member of this Cooperative Society" })
+  //   }
+  //   /////
+  //   const alreadyMem = await db.collection("joinus").findOne({ oracle: oracle })
+  //   if (alreadyMem) {
+  //     return res.status(404).json({
+  //       success: false, message: `Thanks ${alreadyMem.name}, you already sent in your membership request.
+  //        We will get back to you soon` })
+  //   }
+  //   //////////
+  //   const newjoinus = await db.collection('joinus').insertOne({
+  //     name: capitalized(name.trim()),
+  //     oracle: oracle.trim(),
+  //     phone: phone.trim(),
+  //     dob: dob.trim(),
+  //     amount: amount.trim(),
+  //     picture: picture.trim(),
+  //     status: 'pending',
+  //     createdAt: new Date(),
+  //   });
+  //   res.json({
+  //     success: true,
+  //     message: `Thank you ${name?.split(' ')[0]}, Your request is being processed. We will get back to you soon.`,
+  //     id: newjoinus.insertedId
+  //   })
+  // });
+app.post('/api/submitjoinus', async (req, res) => {
+  try {
+    const { name, oracle, phone, dob, amount, picture } = req.body;
+
+    // 1. Validate required fields
     if (!name || !oracle || !phone || !dob || !amount || !picture) {
-      return res.status(400).json({ success: false, message: "Please fill in all fields" });
+      return res.status(400).json({
+        success: false,
+        message: "Please fill in all fields"
+      });
     }
-    /////
-    /////test if the member exist already
-    const aMember = await userslog.findOne({ oracle: oracle })
+
+    // 2. Check if already in userslog (official member)
+    const aMember = await db.collection("userslog").findOne({ oracle: oracle.trim() });
     if (aMember) {
-      return res.status(404).json({ success: false, message: "Sorry, You are already a Member of this Cooperative Society" })
+      return res.status(400).json({
+        success: false,
+        message: "Sorry, You are already a Member of this Cooperative Society"
+      });
     }
-    /////
-    const alreadyMem = await joinus.finOne({ oracle: oracle })
+
+    // 3. Check if request already submitted
+    const alreadyMem = await db.collection("joinus").findOne({ oracle: oracle.trim() });
     if (alreadyMem) {
-      return res.status(404).json({
-        success: false, message: `Thanks ${alreadyMem.name}, you already sent in your membership request.
-         We will get back to you soon` })
+      return res.status(400).json({
+        success: false,
+        message: `Thanks ${alreadyMem.name}, you already sent in your membership request. We will get back to you soon`
+      });
     }
-    //////////
-    const newjoinus = await db.collection('joinus').insertOne({
+
+    // 4. Insert new request
+    const newjoinus = await db.collection("joinus").insertOne({
       name: capitalized(name.trim()),
       oracle: oracle.trim(),
       phone: phone.trim(),
       dob: dob.trim(),
       amount: amount.trim(),
       picture: picture.trim(),
-      status: 'pending',
+      status: "pending",
       createdAt: new Date(),
     });
-    res.json({
+
+    // 5. Success response
+    res.status(201).json({
       success: true,
-      message: `Thank you ${name?.split(' ')[0]}, Your request is being processed. We will get back to you soon.`,
+      message: `Thank you ${name?.split(" ")[0]}, Your request is being processed. We will get back to you soon.`,
       id: newjoinus.insertedId
-    })
-  });
-
-  ////////
-app.get('/api/ViewNewMember', async (req, res) => {
-  try {
-    const members = await joinus.find(); // fetch all docs
-
-    if (!members || members.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "No members found"
-      });
-    }
-
-    res.status(200).json({
-      success: true,
-      data: members,  // send full array
-      message: "Members fetched successfully"
     });
-
   } catch (error) {
-    console.error("Error fetching members:", error);
+    console.error("Error in /api/submitjoinus:", error);
     res.status(500).json({
       success: false,
-      message: "Server error"
+      message: "Server error",
+      error: error.message
     });
   }
 });
+
+  ////////
+  app.get('/api/ViewNewMember', async (req, res) => {
+    try {
+      // use db.collection directly instead of mongoose
+      const members = await db.collection("joinus").find({}).toArray();
+
+      if (!members || members.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: "No members found"
+        });
+      }
+
+      res.status(200).json({
+        success: true,
+        data: members,  // send full array of documents
+        message: "Members fetched successfully"
+      });
+
+    } catch (error) {
+      console.error("Error fetching members:", error);
+      res.status(500).json({
+        success: false,
+        message: "Server error",
+        error: error.message,
+      });
+    }
+  });
+
 
 
   ////////
