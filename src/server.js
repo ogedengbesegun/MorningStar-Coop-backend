@@ -426,14 +426,14 @@ await client.connect().then(() => {
       if (!members || members.length === 0) {
         return res.status(404).json({
           success: false,
-          message: "No members found"
+          message: "No New Members found"
         });
       }
 
       res.status(200).json({
         success: true,
         data: members,  // send full array of documents
-        message: "Members fetched successfully"
+        message: "New Members fetched successfully"
       });
 
     } catch (error) {
