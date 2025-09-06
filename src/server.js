@@ -470,7 +470,34 @@ await client.connect().then(() => {
           message: "Sorry, You have already requested for a loan"
         });
       }
+      //////////to get membersLoan for Admin
+      app.get('/api/viewMemberLoan', async (req, res) => {
+        try {
+          // use db.collection directly instead of mongoose
+          const memLoan = await db.collection("loanRequest").find({}).toArray();
 
+          if (!memLoan || memLoan.length === 0) {
+            return res.status(404).json({
+              success: false,
+              message: "No members' Loan Request found"
+            });
+          }
+
+          res.status(200).json({
+            success: true,
+            data: memLoan,  // send full array of documents
+            message: "Members' Loan Requests fetched successfully"
+          });
+
+        } catch (error) {
+          console.error("Error fetching members' Loan Requests:", error);
+          res.status(500).json({
+            success: false,
+            message: "Server error",
+            error: error.message,
+          });
+        }
+      });
       // // 3. Check if request already submitted
       // const alreadyMem = await db.collection("joinus").findOne({ oracle: oracle.trim() });
       // if (alreadyMem) {
