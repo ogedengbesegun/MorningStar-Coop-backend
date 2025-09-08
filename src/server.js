@@ -257,7 +257,7 @@ await client.connect().then(() => {
 
     ///look fot oraclededuct
     // Get last month safely, wrap around to December if needed
-    const last2Month = monthArray[(month - 1 + 12) % 12];
+    const last2Month = monthArray[(month - 2 + 12) % 12];
     const findoraclededuct = await msc_monthly_2025.findOne({
       oracle: oraclededuct.split(',')[0],
       month: lastMonth || last2Month, deduction: oraclededuct.split(',')[1]
