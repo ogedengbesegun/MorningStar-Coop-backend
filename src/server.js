@@ -259,7 +259,7 @@ await client.connect().then(() => {
 
     const findoraclededuct = await msc_monthly_2025.findOne({
       oracle: oraclededuct.split(',')[0],
-      month: lastMonth || "000000", deduction: oraclededuct.split(',')[1]
+      month: lastMonth || "july", deduction: oraclededuct.split(',')[1]
     })
     if (!findoraclededuct) {
       return res.status(404).json({ success: false, message: "Please, Check your input and try again" })
