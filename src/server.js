@@ -489,15 +489,6 @@ await client.connect().then(() => {
         });
       }
 
-      // // 3. Check if request already submitted
-      // const alreadyMem = await db.collection("joinus").findOne({ oracle: oracle.trim() });
-      // if (alreadyMem) {
-      //   return res.status(400).json({
-      //     success: false,
-      //     message: `Thanks ${alreadyMem.name}, you already sent in your membership request. We will get back to you soon`
-      //   });
-      // }
-
       // 4. Insert new request
       const newloanRequest = await db.collection("loanRequest").insertOne({
         name: capitalized(name.trim()),
@@ -535,10 +526,29 @@ await client.connect().then(() => {
     }
   });
   /////loanstatusIndicator
-  app.post('api/loanStatus', async (req, res) => {
-    const { oracle } = req.body;
-    const loanstatus = await db.collection("loanRequest").findOne({ oracle: oracle });
-    res.status(200).json({ success: true, messsage: loanstatus.status });
+  app.post('/api/loanStatus', async (req, res) => {
+    try {
+      const { oracle } = req.body;
+      if (!oracle) {
+        return res.status(400).json({ success: false, message: "Valid Oracle Number is required" })
+      }
+      const loanstatus = await db.collection("loanRequest").findOne({ oracle: oracle });
+     if (!loanstatus) {
+        return res.status(404).json({ success: false, message: "No loan request found" });
+      }
+      res.status(200).json({
+        success: true, status: loanstatus.status,
+        date: loanstatus.application_date
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: "Server error",
+        error: error.message
+      });
+    }
+
+    // res.status(200).json({ success: true, messsage: loanstatus.status });
   })
   ////////
   //////////to get membersLoan for Admin Viewig
