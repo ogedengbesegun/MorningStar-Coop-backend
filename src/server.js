@@ -533,7 +533,7 @@ await client.connect().then(() => {
         return res.status(400).json({ success: false, message: "Valid Oracle Number is required" })
       }
       const loanstatus = await db.collection("loanRequest").findOne({ oracle: oracle });
-     if (!loanstatus) {
+      if (!loanstatus) {
         return res.status(404).json({ success: false, message: "No loan request found" });
       }
       res.status(200).json({
@@ -548,10 +548,39 @@ await client.connect().then(() => {
       });
     }
 
-    // res.status(200).json({ success: true, messsage: loanstatus.status });
   })
   ////////
+  app.post('/api/approveLoan', async (req, res) => {
+    try {
+      const { approve_loan, oracle } = req.body;
+      if (!approve_loan && !oracle) {
+        return res.status(400).json({ success: false, message: "Valid ID is required" })
+      }
+      const changeStatus = await db.collection("loanRequest").updateOne(
+        { oracle: oracle },
+        { $set: { status: approve_loan } }
+      );
+      if (changeStatus.modifiedCount === 0) {
+        return res.status(500).json({
+          success: false,
+          message: "Loan status not updated",
+        });
+      }
+      res.status(200).json({
+        success: true,
+        message: `${approve_loan}`,
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: "Server error",
+        error: error.message
+      });
+    }
+  });
   //////////to get membersLoan for Admin Viewig
+
+
   app.get('/api/getMemberLoan', async (req, res) => {
     try {
       // use db.collection directly instead of mongoose
