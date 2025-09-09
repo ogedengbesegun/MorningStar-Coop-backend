@@ -257,11 +257,15 @@ await client.connect().then(() => {
 
     ///look fot oraclededuct
     // Get last month safely, wrap around to December if needed
-    const last2Month = monthArray[(month - 2 + 12) % 12];
+    // const last2Month = monthArray[(month - 2 + 12) % 12];
     const findoraclededuct = await msc_monthly_2025.findOne({
       oracle: oraclededuct.split(',')[0],
-      month: lastMonth || last2Month, deduction: oraclededuct.split(',')[1]
+      month: lastMonth, deduction: oraclededuct.split(',')[1]
     })
+    //  const findoraclededuct2 = await msc_monthly_2025.findOne({
+    //   oracle: oraclededuct.split(',')[0],
+    //   month: last2Month, deduction: oraclededuct.split(',')[1]
+    // })
     if (!findoraclededuct) {
       return res.status(404).json({ success: false, message: "Please, Check your input and try again" })
     };
