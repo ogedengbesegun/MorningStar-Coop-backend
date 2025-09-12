@@ -163,7 +163,7 @@ await client.connect().then(() => {
 
 
   app.post('/api/msc_monthly_2025', async (req, res) => {
-    const { lastMonth, thisMonth, yr, newOracle, } = req.body;
+    const { lastMonth, lastMonth3, lastMonth4, thisMonth, yr, newOracle, } = req.body;
 
     try {
       const checkOracle2 = await msc_monthly_2025.findOne({ //2nd months back
@@ -179,14 +179,15 @@ await client.connect().then(() => {
       });
       const checkOracle3 = await msc_monthly_2025.findOne({ //3 months back
         oracle: newOracle,
-        month: month3,
+        month: lastMonth3,
         yr: yr,
       });
       const checkOracle4 = await msc_monthly_2025.findOne({//4 months back
         oracle: newOracle,
-        month: month4,
+        month: lastMonth4,
         yr: yr,
       });
+
 
       // If all months are missing
       if (!checkOracle2 && !checkOracle1 && !checkOracle3 && !checkOracle4) {
@@ -200,19 +201,19 @@ await client.connect().then(() => {
 
       // If current month only is missing
       if (!checkOracle1) {
-
+        const fallback = checkOracle2 || checkOracle3 || checkOracle4;
         return res.status(200).json({
           success: true,
           message: 'Current month record not available. Returning previous month(s) only.',
-          acctprev: checkOracle2
+          acctprev: fallback
             ? {
-              deduction: checkOracle2.deduction ?? checkOracle3.deduction ?? checkOracle4?.deduction ?? "0",
-              savings: checkOracle2.savings ?? checkOracle3.savings ?? checkOracle4?.savings ?? "0",
-              loan_balance: checkOracle2.loan_balance ?? checkOracle3.loan_balance ?? checkOracle4?.loan_balance ?? "0",
-              retirement: checkOracle2.retirement ?? checkOracle3.retirement ?? checkOracle4?.retirement ?? "0",
-              soft_loanBal: checkOracle2.soft_loanBal ?? checkOracle3.soft_loanBal ?? checkOracle4?.soft_loanBal ?? "0",
-              interest_bal: checkOracle2.interest_bal ?? checkOracle3.interest_bal ?? checkOracle4?.interest_bal ?? "0",
-              bank: checkOracle2.bank ?? checkOracle3.bank ?? checkOracle4?.bank ?? "0",
+              deduction: fallback.deduction ?? "0",
+              savings: fallback.savings ?? "0",
+              loan_balance: fallback.loan_balance ?? "0",
+              retirement: fallback.retirement ?? "0",
+              soft_loanBal: fallback.soft_loanBal ?? "0",
+              interest_bal: fallback.interest_bal ?? "0",
+              bank: fallback.bank ?? "0",
             }
             : null,
           acctnow: '0',
