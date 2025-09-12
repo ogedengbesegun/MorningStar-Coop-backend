@@ -48,7 +48,9 @@ await client.connect().then(() => {
     "may", "june", "july", "august",
     "september", "october", "november", "december"
   ];
-
+  const month3 = monthArray[(month - 3 + 12) % 12];
+  const month4 = monthArray[(month - 4 + 12) % 12];
+  console.log([month3, month4]);
   let c_month;
 
   // match numeric month to month name
@@ -161,23 +163,33 @@ await client.connect().then(() => {
 
 
   app.post('/api/msc_monthly_2025', async (req, res) => {
-    const { lastMonth, thisMonth, yr, newOracle } = req.body;
+    const { lastMonth, thisMonth, yr, newOracle, } = req.body;
 
     try {
-      const checkOracle = await msc_monthly_2025.findOne({
+      const checkOracle2 = await msc_monthly_2025.findOne({ //2nd months back
         oracle: newOracle,
         month: lastMonth,
         yr: yr,
       });
 
-      const checkOracle2 = await msc_monthly_2025.findOne({
+      const checkOracle1 = await msc_monthly_2025.findOne({ //current  month
         oracle: newOracle,
         month: thisMonth,
         yr: yr,
       });
+      const checkOracle3 = await msc_monthly_2025.findOne({ //3 months back
+        oracle: newOracle,
+        month: month3,
+        yr: yr,
+      });
+      const checkOracle4 = await msc_monthly_2025.findOne({//4 months back
+        oracle: newOracle,
+        month: month4,
+        yr: yr,
+      });
 
-      // If both are missing
-      if (!checkOracle && !checkOracle2) {
+      // If all months are missing
+      if (!checkOracle2 && !checkOracle1 && !checkOracle3 && !checkOracle4) {
         return res.status(404).json({
           success: false,
           message: `No records found for you. Please check back.`,
@@ -187,48 +199,48 @@ await client.connect().then(() => {
       }
 
       // If current month only is missing
-      if (!checkOracle2) {
+      if (!checkOracle1) {
 
         return res.status(200).json({
           success: true,
-          message: 'Current month record not available. Returning previous month only.',
-          acct: checkOracle
+          message: 'Current month record not available. Returning previous month(s) only.',
+          acctprev: checkOracle2
             ? {
-              deduction: checkOracle.deduction ?? "0",
-              savings: checkOracle.savings ?? "0",
-              loan_balance: checkOracle.loan_balance ?? "0",
-              retirement: checkOracle.retirement ?? "0",
-              soft_loanBal: checkOracle.soft_loanBal ?? "0",
-              interest_bal: checkOracle.interest_bal ?? "0",
-              bank: checkOracle.bank ?? "0"
+              deduction: checkOracle2.deduction ?? checkOracle3.deduction ?? checkOracle4?.deduction ?? "0",
+              savings: checkOracle2.savings ?? checkOracle3.savings ?? checkOracle4?.savings ?? "0",
+              loan_balance: checkOracle2.loan_balance ?? checkOracle3.loan_balance ?? checkOracle4?.loan_balance ?? "0",
+              retirement: checkOracle2.retirement ?? checkOracle3.retirement ?? checkOracle4?.retirement ?? "0",
+              soft_loanBal: checkOracle2.soft_loanBal ?? checkOracle3.soft_loanBal ?? checkOracle4?.soft_loanBal ?? "0",
+              interest_bal: checkOracle2.interest_bal ?? checkOracle3.interest_bal ?? checkOracle4?.interest_bal ?? "0",
+              bank: checkOracle2.bank ?? checkOracle3.bank ?? checkOracle4?.bank ?? "0",
             }
             : null,
-          acct2: '0',
+          acctnow: '0',
         });
       }
 
       // If both exist
       return res.status(200).json({
         success: true,
-        acct: checkOracle
+        acctprev: checkOracle2
           ? {
-            deduction: checkOracle.deduction ?? "0",
-            savings: checkOracle.savings ?? "0",
-            loan_balance: checkOracle.loan_balance ?? "0",
-            retirement: checkOracle.retirement ?? "0",
-            soft_loanBal: checkOracle.soft_loanBal ?? "0",
-            interest_bal: checkOracle.interest_bal ?? "0",
-            bank: checkOracle.bank ?? "0",
+            deduction: checkOracle2.deduction ?? "0",
+            savings: checkOracle2.savings ?? "0",
+            loan_balance: checkOracle2.loan_balance ?? "0",
+            retirement: checkOracle2.retirement ?? "0",
+            soft_loanBal: checkOracle2.soft_loanBal ?? "0",
+            interest_bal: checkOracle2.interest_bal ?? "0",
+            bank: checkOracle2.bank ?? "0",
           }
           : null,
-        acct2: {
-          deduction: checkOracle2.deduction ?? "0",
-          savings: checkOracle2.savings ?? "0",
-          loan_balance: checkOracle2.loan_balance ?? "0",
-          retirement: checkOracle2.retirement ?? "0",
-          soft_loanBal: checkOracle2.soft_loanBal ?? "0",
-          interest_bal: checkOracle2.interest_bal ?? "0",
-          bank: checkOracle2.bank ?? "0",
+        acctnow: {
+          deduction: checkOracle1.deduction ?? "0",
+          savings: checkOracle1.savings ?? "0",
+          loan_balance: checkOracle1.loan_balance ?? "0",
+          retirement: checkOracle1.retirement ?? "0",
+          soft_loanBal: checkOracle1.soft_loanBal ?? "0",
+          interest_bal: checkOracle1.interest_bal ?? "0",
+          bank: checkOracle1.bank ?? "0",
         },
       });
     } catch (error) {
