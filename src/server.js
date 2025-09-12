@@ -214,6 +214,7 @@ await client.connect().then(() => {
               soft_loanBal: fallback.soft_loanBal ?? "0",
               interest_bal: fallback.interest_bal ?? "0",
               bank: fallback.bank ?? "0",
+              month: fallback.month ?? "N/A",
             }
             : null,
           acctnow: '0',
@@ -232,6 +233,7 @@ await client.connect().then(() => {
             soft_loanBal: checkOracle2.soft_loanBal ?? "0",
             interest_bal: checkOracle2.interest_bal ?? "0",
             bank: checkOracle2.bank ?? "0",
+            month: checkOracle2.month ?? "N/A",
           }
           : null,
         acctnow: {
@@ -242,6 +244,7 @@ await client.connect().then(() => {
           soft_loanBal: checkOracle1.soft_loanBal ?? "0",
           interest_bal: checkOracle1.interest_bal ?? "0",
           bank: checkOracle1.bank ?? "0",
+          month:checkOracle1.month ?? "N/A"
         },
       });
     } catch (error) {
